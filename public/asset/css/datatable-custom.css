@@ -1,0 +1,32 @@
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #fff !important;
+    border: none !important;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+    justify-content: center;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 1px !important;
+}
+
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+    content: none !important
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    border: none !important;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    padding: 9px 21px;
+}
+
+table.dataTable.no-footer {
+    border-bottom: none;
+}
