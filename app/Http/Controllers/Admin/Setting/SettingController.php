@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Setting;
 
 use App\Helpers\Helper;
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Models\SettingTypeForm;
@@ -26,6 +27,7 @@ class SettingController extends Controller
             'head1' => 'Heading Pesan',
             'signature_headmaster' => 'Tanda tangan Kepala Sekolah',
             'stamp' => 'Gambar Stempel',
+            'logo_school' => 'Logo Sekolah',
         ];
 
         $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
@@ -35,7 +37,7 @@ class SettingController extends Controller
             'logo1' => ['image', $mimes, $max_size],
             'logo2' => ['image', $mimes, $max_size],
             'stamp' => ['image', $mimes, $max_size],
-            'logo_school' => ['image', $mimes, $max_size],
+            'logo_school' => ['required', 'image', $mimes, $max_size],
             'signature_headmaster' => ['image', $mimes, $max_size],
             'head1' => ['required', "regex:/^[a-zA-Z .,']+$/"],
             'name_school' => ['required'],
@@ -57,7 +59,7 @@ class SettingController extends Controller
             ], 302);
         } else {
             $status_open = 1;
-            if($request->status_open){
+            if ($request->status_open) {
                 $status_open = 0;
             }
 
@@ -93,41 +95,63 @@ class SettingController extends Controller
                 'nip_headmaster' => $request->nip_headmaster,
             ];
 
-            if ($request->id != null) {
-                $setting = Setting::find($request->id);
+            // if ($request->id != null) {
+            //     $setting = Setting::find($request->id);
+            // }
+
+            if ($request->hasFile('logo_school')) {
+                $data = ImageHelper::upload_asset($request, 'logo_school', 'logo', $data);
             }
 
-            if (!empty($request->logo_school)) {
-                if ($request->id != null) {
-                    Helper::delete_aws($setting->logo1);
-                }
-                $data = Helper::upload_aws($request, 'logo_school', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            if ($request->hasFile('logo1')) {
+                $data = ImageHelper::upload_asset($request, 'logo1', 'logo', $data);
             }
 
-            if (!empty($request->logo1)) {
-                if ($request->id != null) {
-                    Helper::delete_aws($setting->logo1);
-                }
-                $data = Helper::upload_aws($request, 'logo1', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            if ($request->hasFile('logo2')) {
+                $data = ImageHelper::upload_asset($request, 'logo2', 'logo', $data);
             }
-            if (!empty($request->logo2)) {
-                if ($request->id != null) {
-                    Helper::delete_aws($setting->logo2);
-                }
-                $data = Helper::upload_aws($request, 'logo2', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+
+            if ($request->hasFile('stamp')) {
+                $data = ImageHelper::upload_asset($request, 'stamp', 'logo', $data);
             }
-            if (!empty($request->stamp)) {
-                if ($request->id != null) {
-                    Helper::delete_aws($setting->stamp);
-                }
-                $data = Helper::upload_aws($request, 'stamp', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+
+            if ($request->hasFile('signature_headmaster')) {
+                $data = ImageHelper::upload_asset($request, 'signature_headmaster', 'logo', $data);
             }
-            if (!empty($request->signature_headmaster)) {
-                if ($request->id != null) {
-                    Helper::delete_aws($setting->signature_headmaster);
-                }
-                $data = Helper::upload_aws($request, 'signature_headmaster', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
-            }
+
+            // if (!empty($request->logo_school)) {
+            //     if ($request->id != null) {
+            //         Helper::delete_aws($setting->logo1);
+            //     }
+            //     $data = Helper::upload_aws($request, 'logo_school', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            // }
+
+            // if (!empty($request->logo1)) {
+            //     if ($request->id != null) {
+            //         Helper::delete_aws($setting->logo1);
+            //     }
+            //     $data = Helper::upload_aws($request, 'logo1', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            // }
+            // if (!empty($request->logo2)) {
+            //     if ($request->id != null) {
+            //         Helper::delete_aws($setting->logo2);
+            //     }
+            //     $data = Helper::upload_aws($request, 'logo2', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            // }
+            // if (!empty($request->stamp)) {
+            //     if ($request->id != null) {
+            //         Helper::delete_aws($setting->stamp);
+            //     }
+            //     $data = Helper::upload_aws($request, 'stamp', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            // }
+            // if (!empty($request->signature_headmaster)) {
+            //     if ($request->id != null) {
+            //         Helper::delete_aws($setting->signature_headmaster);
+            //     }
+            //     $data = Helper::upload_aws($request, 'signature_headmaster', 'ppdb/image/setting/', $data, 'null|null', 'null|null');
+            // }
+
+            dd($data);
             Setting::updateOrCreate(
                 ['id' => $request->id],
                 $data
@@ -145,7 +169,5 @@ class SettingController extends Controller
         $type = SettingTypeForm::with('forms')->get();
         // dd($type);
         return view('content.admin.setting.v_setting_form', compact('type'));
-
-
     }
 }

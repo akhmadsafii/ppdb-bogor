@@ -102,7 +102,7 @@
                                                         <textarea name="address" id="address" rows="3" class="form-control">{{ old('address') }}</textarea>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                {{-- <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label for="">Koordinat Latitude</label>
                                                         <input type="text" name="latitude" id="latitude"
@@ -115,7 +115,7 @@
                                                         <input type="text" name="longitude" id="longitude"
                                                             class="form-control" value="{{ old('longitude') }}">
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 {{-- <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="">Alamat</label>

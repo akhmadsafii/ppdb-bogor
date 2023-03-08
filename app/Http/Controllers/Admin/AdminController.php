@@ -199,7 +199,7 @@ class AdminController extends Controller
                 'address' => empty($request->address) ? $admin->address : $request->address,
             ];
             if (!empty($request->file)) {
-                Helper::delete_aws($admin->file);
+                // Helper::delete_aws($admin->file);
                 $data = Helper::upload_aws($request, 'file', 'ppdb/image/profile/admin/', $data, '150|150', 'null|null');
             }
             $admin->update($data);

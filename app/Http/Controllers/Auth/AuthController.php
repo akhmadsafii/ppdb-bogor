@@ -86,8 +86,8 @@ class AuthController extends Controller
             'phone' => ['required'],
             'email' => ['required'],
             'password' => ['required'],
-            'longitude' => ['required'],
-            'latitude' => ['required'],
+            // 'longitude' => ['required'],
+            // 'latitude' => ['required'],
         ];
 
         $messages = [

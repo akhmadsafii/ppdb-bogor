@@ -57,7 +57,7 @@
                                     <input type="text" name="max_upload" class="form-control"
                                         value="{{ $setting['max_upload'] }}">
                                 </div>
-                                <div class="col-md-6 mb-3 input-has-value">
+                                {{-- <div class="col-md-6 mb-3 input-has-value">
                                     <label for="validationServer01">Gunakan Maps Untuk mendapatkan koordinat? <small
                                             class="ml-2 text-danger">*Akan dikenakan biaya tambahan</small></label>
                                     <select name="leaflet_premium" id="leaflet_premium" class="form-control"
@@ -70,13 +70,13 @@
                                     <small>Jika ingin manampilkan maps, silahkan hubungi <a href="">MYSCH</a> untuk
                                         mendapatkan token leaflet premium. syarat dan
                                         ketentuan berlaku</small>
-                                </div>
-                                <div class="col-md-6 mb-3 input-has-value d-none" id="token-premium">
+                                </div> --}}
+                                {{-- <div class="col-md-6 mb-3 input-has-value d-none" id="token-premium">
                                     <label for="validationServer01">Token Maps <small class="ml-2 text-danger">*Masukan
                                             token leaflet anda</small></label>
                                     <input type="text" class="form-control" name="token_leaflet" id="token_leaflet"
                                         value="{{ $setting['token_leaflet'] }}">
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6 mb-3 input-has-value">
                                     <label for="validationServer01">Resolusi Gambar Thumbnail (Pixels)</label>
                                     @php

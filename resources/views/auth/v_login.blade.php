@@ -17,7 +17,7 @@
                             <div class="row d-flex">
                                 <div class="col-lg-6 my-auto">
                                     <img src="{{ asset('asset/image/login.jpg') }}" class="image"
-                                        style="border-radius: 20px 20px 0 0">
+                                        style="border-radius: 20px 0 0 20px;">
                                 </div>
                                 <div class="col-lg-6 my-auto">
                                     <div class="card-body">
