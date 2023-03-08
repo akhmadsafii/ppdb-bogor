@@ -186,4 +186,16 @@ class Helper
         }
         return $link;
     }
+
+    public static function str_random($length)
+    {
+        $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+    }
+
+    public static function no_random($length)
+    {
+        $pool = '0123456789';
+        return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+    }
 }

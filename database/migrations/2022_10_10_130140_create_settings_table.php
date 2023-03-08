@@ -18,7 +18,7 @@ class CreateSettingsTable extends Migration
             $table->string('code')->nullable();
             $table->string('name_school');
             $table->string('name_program');
-            $table->string('logo_school');
+            $table->string('logo_school')->nullable();
             $table->string('head1');
             $table->string('head2');
             $table->string('head3');

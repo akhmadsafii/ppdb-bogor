@@ -10,6 +10,7 @@ use App\Models\PaymentParticipant;
 use App\Models\Registration;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class DashboardController extends Controller
@@ -17,8 +18,16 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        // dd(session()->all());
         $setting = Setting::first();
-        // dd($setting);
+        if (Auth::guard('admin')->check()) {
+            $guard = 'admin';
+        } else {
+            $guard = 'supervisor';
+        }
+        if (Auth::guard($guard)->user()->file != 'user.png') {
+            session()->put('avatar', Auth::guard($guard)->user()->file);
+        }
         session()->put('title', 'Dashboard Admin');
         $year = session('school_year');
         $payment = PaymentParticipant::where('school_year', 'like', "$year%")->get();
@@ -51,27 +60,27 @@ class DashboardController extends Controller
                 ['payment_status', 0]
             ]);
             return DataTables::of($data)->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<div class="btn-group" role="group" aria-label="Horizontal Button Group">';
-                $btn = '<a href="javascript:void(0)" class="m-1 detail btn btn-purple btn-sm" data-id="' . $row['id'] . '"><i class="material-icons list-icon md-18">info_outline</i></a>';
-                $btn .= '<a href="javascript:void(0)" class="m-1 edit btn btn-info btn-sm" data-id="' . $row['id'] . '"><i class="material-icons list-icon md-18">edit</i></a>';
-                $btn .= '</div>';
-                return $btn;
-            })
-            ->editColumn('pay_date', function ($row) {
-                return Helper::formatMonth($row->pay_date);
-            })
-            ->editColumn('nominal', function ($row) {
-                return str_replace(',', '.', number_format($row['nominal']));
-            })
-            ->editColumn('nisn', function ($row) {
-                return $row->participants->nisn;
-            })
-            ->editColumn('name_participant', function ($row) {
-                return $row->participants->name;
-            })
-            ->rawColumns(['action', 'image', 'nisn', 'name_participant', 'check', 'pay_date', 'nominal'])
-            ->make(true);
+                ->addColumn('action', function ($row) {
+                    $btn = '<div class="btn-group" role="group" aria-label="Horizontal Button Group">';
+                    $btn = '<a href="javascript:void(0)" class="m-1 detail btn btn-purple btn-sm" data-id="' . $row['id'] . '"><i class="material-icons list-icon md-18">info_outline</i></a>';
+                    $btn .= '<a href="javascript:void(0)" class="m-1 edit btn btn-info btn-sm" data-id="' . $row['id'] . '"><i class="material-icons list-icon md-18">edit</i></a>';
+                    $btn .= '</div>';
+                    return $btn;
+                })
+                ->editColumn('pay_date', function ($row) {
+                    return Helper::formatMonth($row->pay_date);
+                })
+                ->editColumn('nominal', function ($row) {
+                    return str_replace(',', '.', number_format($row['nominal']));
+                })
+                ->editColumn('nisn', function ($row) {
+                    return $row->participants->nisn;
+                })
+                ->editColumn('name_participant', function ($row) {
+                    return $row->participants->name;
+                })
+                ->rawColumns(['action', 'image', 'nisn', 'name_participant', 'check', 'pay_date', 'nominal'])
+                ->make(true);
         }
 
         return view('content.admin.v_dashboard', compact('payment_result', 'participant_approved', 'message', 'setting'));

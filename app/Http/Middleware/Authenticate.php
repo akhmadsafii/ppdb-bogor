@@ -19,7 +19,7 @@ class Authenticate extends Middleware
         //     return route('login');
         // }
 
-        if (Auth::guard('admin')->check()) {
+        if (Auth::guard('admin')->check() || Auth::guard('supervisor')->check()) {
             return redirect()->route('dashboard-admin');
         } else if (Auth::guard('participant')->check()) {
             return redirect()->route('dashboard-participant');

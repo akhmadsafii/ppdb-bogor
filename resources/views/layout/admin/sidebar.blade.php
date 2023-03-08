@@ -3,16 +3,21 @@
         <figure class="media-left media-middle user--online thumb-sm mr-r-10 mr-b-0">
             @php
                 $img = asset('asset/image/user.png');
-                if (Auth::guard('admin')->user()->file != 'user.png') {
-                    $img = Helper::showImage(Auth::guard('admin')->user()->file);
+                if (Auth::guard('admin')->check()) {
+                    $guard = 'admin';
+                } else {
+                    $guard = 'supervisor';
+                }
+                if (Auth::guard($guard)->user()->file != 'user.png') {
+                    $img = asset(session('avatar'));
                 }
             @endphp
             <div id="profile-admin" class="rounded-circle" style="background-image: url('{{ $img }}')">
             </div>
         </figure>
         <div class="media-body hide-menu">
-            <h4 class="media-heading mr-b-5 text-uppercase">{{ Auth::guard('admin')->user()->name }}</h4>
-            <span class="user-type fs-12">login Admin</span>
+            <h4 class="media-heading mr-b-5 text-uppercase">{{ Auth::guard($guard)->user()->name }}</h4>
+            <span class="user-type fs-12">login {{ $guard }}</span>
         </div>
     </a>
 </div>
@@ -24,11 +29,20 @@
                 <span class="hide-menu">Dashboard </span>
             </a>
         </li>
-        <li>
-            <a href="{{ route('account_admin') }}" class="text-custom">
+        <li
+            class="current-page menu-item-has-children {{ request()->segment(2) == 'registration' || request()->segment(2) == 'participant' ? 'active' : '' }}">
+            <a href="javascript:void(0);" class="ripple text-custom">
                 <i class="list-icon material-icons">supervisor_account</i>
-                <span class="hide-menu">Data Admin</span>
+                <span class="hide-menu">Administrator</span>
             </a>
+            <ul class="list-unstyled sub-menu">
+                <li>
+                    <a href="{{ route('account_admin') }}" class="text-custom">Admin</a>
+                </li>
+                <li>
+                    <a href="{{ route('supervisor.account') }}" class="text-custom">Supervisor</a>
+                </li>
+            </ul>
         </li>
         <li
             class="current-page menu-item-has-children {{ request()->segment(2) == 'registration' || request()->segment(2) == 'participant' ? 'active' : '' }}">
@@ -37,17 +51,6 @@
                 <span class="hide-menu">Data Peserta</span>
             </a>
             <ul class="list-unstyled sub-menu">
-                {{-- <li class="menu-item-has-children">
-                    <a href="javascript:void(0);" class="text-custom">Pendaftar</a>
-                    <ul class="list-unstyled sub-menu">
-                        <li>
-                            <a href="app-inbox.html" class="text-custom">Akun</a>
-                        </li>
-                        <li>
-                            <a href="app-inbox-single.html" class="text-custom">Register</a>
-                        </li>
-                    </ul>
-                </li> --}}
                 <li>
                     <a href="{{ route('account_participant') }}" class="text-custom">Akun</a>
                 </li>
@@ -55,12 +58,6 @@
                     <a href="{{ route('master_registration', ['based' => 'all-account']) }}"
                         class="text-custom">Peserta</a>
                 </li>
-                {{-- <li>
-                    <a href="../collapse-nav/index.html" class="text-custom">Pendaftaran</a>
-                </li> --}}
-                {{-- <li>
-                    <a href="../horizontal-nav-icons/index.html" class="text-custom">Pendaftar Ditolak</a>
-                </li> --}}
             </ul>
         </li>
         <li class="current-page menu-item-has-children {{ request()->segment(2) == 'payment' ? 'active' : '' }}">

@@ -154,7 +154,7 @@
                                     <div class="row d-flex flex-row-reverse">
                                         <div class="col-md-9">
                                             <img id="image-preview" src="https://via.placeholder.com/150" alt="Preview"
-                                                class="form-group my-1" width="50%">
+                                                class="form-group my-1 rounded" width="50%">
                                             <br>
                                             <span>*Gunakan ukuran 150 x 150 untuk hasil yang terbaik</span>
                                         </div>
@@ -396,7 +396,7 @@
                         success: function(data) {
                             $('#modal-title_detail').html("Detail {{ session('title') }}");
                             var script_html = ` <div class="d-flex align-items-center">`;
-                            script_html += `<img src="` + data.file + `" alt="" height="150">`;
+                            script_html += `<img src="` + data.file + `" alt="" height="150" class="rounded mr-2">`;
                             script_html += `<div class="w-100">
                                                 <div class="form-group row m-0">
                                                     <label class="col-md-4 col-form-label">Nama</label>

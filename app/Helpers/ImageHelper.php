@@ -11,7 +11,7 @@ class ImageHelper
     public static function upload_asset($request, $name, $path, $data)
     {
         $file = $request->file($name);
-        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
+        $profileImage = date('YmdHis') . Helper::no_random(5) . "." . $file->getClientOriginalExtension();
         $resolution = explode('|', env('SETTING_RESOLUTION'));
         // dd($resolution);
         $thumb = Image::make($file->getRealPath())->resize($resolution[0], $resolution[1], function ($constraint) {

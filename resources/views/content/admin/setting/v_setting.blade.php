@@ -3,9 +3,6 @@
     @push('styles')
         @include('plugins.tags.tags_css')
         @include('plugins.datetime.datetime_css')
-        @if (env('SETTING_LEAFLET_PREMIUM') == 1)
-            @include('plugins.leaflet.leaflet_css')
-        @endif
     @endpush
     <div class="row page-title clearfix">
         <div class="page-title-left">
@@ -229,11 +226,11 @@
                                                         $image = 'https://via.placeholder.com/150';
                                                         $logo_school = $image;
                                                         if ($setting && $setting['logo_school']) {
-                                                            $logo_school = Helper::showImage('thumb/' . $setting['logo_school']);
+                                                            $logo_school = asset($setting['logo_school']);
                                                         }
                                                     @endphp
-                                                    <img id="preview-logo_school" src="{{ $logo_school }}" alt="Preview"
-                                                        class="form-group mb-1 w-100">
+                                                    <img id="preview-logo_school" src="{{ $logo_school }}"
+                                                        alt="Preview" class="form-group mb-1 w-100">
                                                 </div>
                                             </div>
                                         </div>
@@ -246,7 +243,7 @@
                                                     @php
                                                         $logo1 = $image;
                                                         if ($setting && $setting['logo1']) {
-                                                            $logo1 = Helper::showImage('thumb/' . $setting['logo1']);
+                                                            $logo1 = asset($setting['logo1']);
                                                         }
                                                     @endphp
                                                     <img id="preview-logo" src="{{ $logo1 }}" alt="Preview"
@@ -263,7 +260,7 @@
                                                     @php
                                                         $logo2 = $image;
                                                         if ($setting && $setting['logo2']) {
-                                                            $logo2 = Helper::showImage('thumb/' . $setting['logo2']);
+                                                            $logo2 = asset($setting['logo2']);
                                                         }
                                                     @endphp
                                                     <img id="preview-logo2" src="{{ $logo2 }}" alt="Preview"
@@ -280,7 +277,7 @@
                                                     @php
                                                         $stamp = $image;
                                                         if ($setting && $setting['stamp']) {
-                                                            $stamp = Helper::showImage('thumb/' . $setting['stamp']);
+                                                            $stamp = asset($setting['stamp']);
                                                         }
                                                     @endphp
                                                     <img id="preview-stamp" src="{{ $stamp }}" alt="Preview"
@@ -298,7 +295,7 @@
                                                     @php
                                                         $signature = $image;
                                                         if ($setting && $setting['signature_headmaster']) {
-                                                            $signature = Helper::showImage('thumb/' . $setting['signature_headmaster']);
+                                                            $signature = asset($setting['signature_headmaster']);
                                                         }
                                                     @endphp
                                                     <img id="preview-signature" src="{{ $signature }}" alt="Preview"
@@ -338,9 +335,9 @@
                 });
 
                 $('body').on('submit', '#formSubmit', function(e) {
-                    // $("#btnSubmit").html(
-                    //     '<i class="fa fa-spin fa-sync"></i> Memproses');
-                    // $("#btnSubmit").attr("disabled", true);
+                    $("#btnSubmit").html(
+                        '<i class="fa fa-spin fa-sync"></i> Memproses');
+                    $("#btnSubmit").attr("disabled", true);
                     e.preventDefault();
                     var formData = new FormData(this);
                     $.ajax({

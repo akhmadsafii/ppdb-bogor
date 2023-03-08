@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\Setting\AppearanceController;
 use App\Http\Controllers\Admin\Setting\SettingController;
 use App\Http\Controllers\Admin\Setting\SettingPaymentController;
 use App\Http\Controllers\Admin\Setting\SettingTemplateController;
+use App\Http\Controllers\Admin\SupervisorController;
 use App\Http\Controllers\Admin\TypeFormController;
 use App\Http\Controllers\AnnouncementController as ControllersAnnouncementController;
 use App\Http\Controllers\Auth\AuthController;
@@ -77,7 +78,8 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-Route::middleware('auth:admin')->group(function () {
+Route::middleware('auth:supervisor,admin')->group(function () {
+    // Route::middleware('auth:admin')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard-admin');
 
@@ -90,6 +92,17 @@ Route::middleware('auth:admin')->group(function () {
             Route::get('edit', [AdminController::class, 'edit'])->name('edit');
             Route::post('update-profile', [AdminController::class, 'update_profile'])->name('update_profile');
             Route::post('update-password', [AdminController::class, 'update_password'])->name('update_password');
+        });
+
+        Route::prefix('supervisor')->name('supervisor.')->group(function () {
+            Route::get('/', [SupervisorController::class, 'index'])->name('account');
+            Route::post('/', [SupervisorController::class, 'store'])->name('store');
+            Route::get('delete', [SupervisorController::class, 'delete'])->name('delete');
+            Route::get('detail', [SupervisorController::class, 'detail'])->name('detail');
+            Route::get('update-status', [SupervisorController::class, 'update_status'])->name('update_status');
+            // Route::get('edit', [SupervisorController::class, 'edit'])->name('edit');
+            // Route::post('update-profile', [SupervisorController::class, 'update_profile'])->name('update_profile');
+            // Route::post('update-password', [SupervisorController::class, 'update_password'])->name('update_password');
         });
 
         Route::get('participant', [ParticipantController::class, 'index'])->name('account_participant');

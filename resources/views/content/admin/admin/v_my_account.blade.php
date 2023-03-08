@@ -1,9 +1,5 @@
 @extends('layout.admin.main')
 @section('content')
-    @push('styles')
-        {{-- <link href="{{ asset('asset/css/switch-custom.css') }}" rel="stylesheet" type="text/css">
-        @include('plugins.datatable.datatable_css') --}}
-    @endpush
     <div class="row page-title clearfix">
         <div class="page-title-left">
             <h5 class="mr-0 mr-r-5">{{ session('title') }}</h5>
@@ -98,7 +94,7 @@
                                         <input class="form-control-file" name="file" type="file"
                                             onchange="readURL(this);">
                                         @php
-                                            $img = Helper::showImage('thumb/' . $admin['file']);
+                                            $img = asset($admin['file']);
                                             if ($admin['file'] == 'user.png') {
                                                 $img = asset('asset/image/user.png');
                                             }
@@ -193,8 +189,9 @@
                         contentType: false,
                         processData: false,
                         success: (data) => {
-                            $('#btnSubmit').html('Simpan');
-                            $("#btnSubmit").attr("disabled", false);
+                            window.location.reload();
+                            // $('#btnSubmit').html('Simpan');
+                            // $("#btnSubmit").attr("disabled", false);
                         },
                         error: function(data) {
                             const res = data.responseJSON;

@@ -25,6 +25,14 @@
                                             <h5 class="box-title mr-b-0">Halaman Masuk</h5>
                                             <small class="text-muted">Silahkan masuk untuk melanjutkan pendaftaran</small>
                                             <hr>
+                                            {{-- @if ($errors->any())
+                                                <div class="alert alert-icon alert-info border-info alert-dismissible fade show"
+                                                    role="alert">
+                                                    <i class="material-icons list-icon">info</i>
+                                                    <strong>Heads up!</strong>
+                                                    {{ $errors->first() }}
+                                                </div>
+                                            @endif --}}
                                             <form method="POST" action="{{ route('auth.verify_login') }}">
                                                 @csrf
                                                 <div class="form-group">
@@ -48,10 +56,14 @@
                                                 </div>
                                                 <div class="text-center">
                                                     <button class="btn btn-info btn-block" type="submit">Masuk</button>
-                                                    @if ($setting && $setting['status_open'] == 1 && $setting['open_date'] < date('Y-m-d H:i:s') && $setting['closing_date'] .' '.$setting['closing_hour'] > date('Y-m-d H:i:s'))
-                                                    <small class="font-weight-bold text-center">Belum punya Akun? <a
-                                                            class="text-info" href="{{ route('auth.register') }}">Daftar
-                                                            Disini</a></small>
+                                                    @if (
+                                                        $setting &&
+                                                            $setting['status_open'] == 1 &&
+                                                            $setting['open_date'] < date('Y-m-d H:i:s') &&
+                                                            $setting['closing_date'] . ' ' . $setting['closing_hour'] > date('Y-m-d H:i:s'))
+                                                        <small class="font-weight-bold text-center">Belum punya Akun? <a
+                                                                class="text-info" href="{{ route('auth.register') }}">Daftar
+                                                                Disini</a></small>
                                                     @endif
                                                 </div>
                                             </form>

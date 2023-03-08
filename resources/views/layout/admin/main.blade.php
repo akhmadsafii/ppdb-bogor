@@ -31,7 +31,7 @@
             height: 60px;
             background-position: center center;
             background-repeat: no-repeat;
-            background-size: auto 60px;
+            background-size: cover;
         }
     </style>
 </head>
@@ -43,7 +43,7 @@
                 @php
                     $logo = asset('asset/image/tutwuri.png');
                     if (session()->has('logo_school')) {
-                        $logo = Helper::showImage(session('logo_school'));
+                        $logo = asset(session('logo_school'));
                     }
                 @endphp
                 <a href="{{ route('dashboard-admin') }}" class="navbar-brand bg-custom text-center">
@@ -64,8 +64,13 @@
                         <span class="avatar thumb-sm">
                             @php
                                 $img = asset('asset/image/user.png');
-                                if (Auth::guard('admin')->user()->file != 'user.png') {
-                                    $img = Storage::disk('s3')->temporaryUrl('thumb/' . Auth::guard('admin')->user()->file, '+2 minutes');
+                                if (Auth::guard('admin')->check()) {
+                                    $guard = 'admin';
+                                } else {
+                                    $guard = 'supervisor';
+                                }
+                                if (Auth::guard($guard)->user()->file != 'user.png') {
+                                    $img = asset(session('avatar'));
                                 }
                             @endphp
                             <div id="profile-admin" class="rounded-circle border"

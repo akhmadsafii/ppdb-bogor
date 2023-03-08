@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Helpers\Helper;
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Supervisor;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
@@ -32,7 +32,7 @@ class AdminController extends Controller
                 ->editColumn('image', function ($row) {
                     $img = '<img class="rounded" height="40" src="' . asset('asset/image/user.png') . '" alt="user">';
                     if ($row['file'] != 'user.png') {
-                        $img = '<a href="' . Storage::disk('s3')->temporaryUrl($row->file, '+2 minutes') . '" target="_blank"><img class="rounded" width="55" src="' . Storage::disk('s3')->temporaryUrl('thumb/' . $row->file, '+2 minutes') . '" alt="user"></a>';
+                        $img = '<img class="rounded" width="55" src="' . asset($row->file) . '" alt="user">';
                     }
                     return $img;
                 })
@@ -101,12 +101,8 @@ class AdminController extends Controller
                 'address' => $request->address,
                 'social' => $social,
             ];
-            if (!empty($request->file)) {
-                if ($request->id != null) {
-                    $admin = Admin::find($request->id);
-                    Helper::delete_aws($admin->file);
-                }
-                $data = Helper::upload_aws($request, 'file', 'ppdb/image/profile/admin/', $data, '150|150', '200|200');
+            if ($request->hasFile('file')) {
+                $data = ImageHelper::upload_asset($request, 'file', 'avatar', $data);
             }
             Admin::updateOrCreate(
                 ['id' => $request->id],
@@ -122,7 +118,7 @@ class AdminController extends Controller
     public function detail(Request $request)
     {
         $detail = Admin::find($request->id);
-        $file = Storage::disk('s3')->temporaryUrl('thumb/' . $detail->file, '+2 minutes');
+        $file = asset($detail->file);
         if ($detail->file == null || $detail->file == 'user.png') {
             $file = asset('asset/image/user.png');
         }
@@ -134,7 +130,6 @@ class AdminController extends Controller
     {
         $admin = Admin::find($request->id);
         $admin->update(array('status' => 0));
-        Helper::delete_aws($admin->file);
         return response()->json([
             'message' => 'Admin berhasil dihapus',
             'status' => true,
@@ -153,7 +148,12 @@ class AdminController extends Controller
     public function edit()
     {
         session()->put('title', 'Ubah Profile');
-        $admin = Admin::find(Auth::guard('admin')->user()->id);
+        if (Auth::guard('admin')->check()) {
+            $admin = Admin::find(Auth::guard('admin')->user()->id);
+        } else {
+            $admin = Supervisor::find(Auth::guard('supervisor')->user()->id);
+        }
+        // dd($admin);
         return view('content.admin.admin.v_my_account', compact('admin'));
     }
 
@@ -198,9 +198,9 @@ class AdminController extends Controller
                 'date_of_birth' => empty($request->date_of_birth) ? $admin->date_of_birth : $request->date_of_birth,
                 'address' => empty($request->address) ? $admin->address : $request->address,
             ];
-            if (!empty($request->file)) {
-                // Helper::delete_aws($admin->file);
-                $data = Helper::upload_aws($request, 'file', 'ppdb/image/profile/admin/', $data, '150|150', 'null|null');
+            if ($request->hasFile('file')) {
+                $data = ImageHelper::upload_asset($request, 'file', 'avatar', $data);
+                session()->put('avatar', $data['file']);
             }
             $admin->update($data);
 
@@ -209,7 +209,6 @@ class AdminController extends Controller
                 'status' => true,
             ], 200);
         }
-
     }
 
     public function update_password(Request $request)

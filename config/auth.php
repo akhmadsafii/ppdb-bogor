@@ -65,6 +65,11 @@ return [
             'driver' => 'token',
             'provider' => 'participant',
         ],
+
+        'supervisor' => [
+          'driver' => 'session',
+          'provider' => 'supervisor',
+        ],
     ],
 
     /*
@@ -98,6 +103,11 @@ return [
           'participant' => [
             'driver' => 'eloquent',
             'model' => App\Models\Participant::class,
+          ],
+
+          'supervisor' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Supervisor::class,
           ],
 
         // 'users' => [

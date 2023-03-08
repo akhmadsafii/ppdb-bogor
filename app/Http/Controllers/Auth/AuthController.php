@@ -26,10 +26,13 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
+
         if (Auth::guard('admin')->attempt($this->admin_credentials($request), $request->filled('remember'))) {
             return redirect()->intended(route('dashboard-admin'));
         } else if (Auth::guard('participant')->attempt($this->participant_credentials($request), $request->filled('remember'))) {
             return redirect()->intended(route('participant.dashboard-participant'));
+        } else if (Auth::guard('supervisor')->attempt($this->spv_credentials($request), $request->filled('remember'))) {
+            return redirect()->intended(route('dashboard-admin'));
         }
         return redirect()->back()->withInput()->withErrors(['msg' => 'Anda tidak mempunyai akses untuk login']);
     }
@@ -42,6 +45,14 @@ class AuthController extends Controller
             return ['email' => $request->get('username'), 'password' => $request->get('password'), 'status' => 1];
         }
         return ['username' => $request->get('username'), 'password' => $request->get('password'), 'status' => 1];
+    }
+
+    protected function spv_credentials(Request $request)
+    {
+        if (filter_var($request->get('username'), FILTER_VALIDATE_EMAIL)) {
+            return ['email' => $request->get('username'), 'password' => $request->get('password'), 'status' => 1];
+        }
+        return ['phone' => $request->get('username'), 'password' => $request->get('password'), 'status' => 1];
     }
 
     protected function participant_credentials(Request $request)

@@ -31,8 +31,8 @@ class PrintController extends Controller
             'header2' => empty($setting) ? null : (empty($setting->head2) ? null : $setting->head2),
             'header3' => empty($setting) ? null : (empty($setting->head3) ? null : $setting->head3),
             'address' => empty($setting) ? null : (empty($setting->address) ? null : $setting->address),
-            'logo' => empty($setting) ? null : (empty($setting->logo1) ? null : Helper::showImage($setting->logo1)),
-            'logo2' => empty($setting) ? null : (empty($setting->logo2) ? null : Helper::showImage($setting->logo2)),
+            'logo' => empty($setting) ? null : (empty($setting->logo1) ? null : asset($setting->logo1)),
+            'logo2' => empty($setting) ? null : (empty($setting->logo2) ? null : asset($setting->logo2)),
         ];
 
         $set_form = SettingForm::where('status_form', 1)->orderBy('order_form', 'ASC')->get();
@@ -82,8 +82,8 @@ class PrintController extends Controller
             'header2' => empty($setting) ? null : (empty($setting->head2) ? null : $setting->head2),
             'header3' => empty($setting) ? null : (empty($setting->head3) ? null : $setting->head3),
             'address' => empty($setting) ? null : (empty($setting->address) ? null : $setting->address),
-            'logo' => empty($setting) ? null : (empty($setting->logo1) ? null : Helper::showImage($setting->logo1)),
-            'logo2' => empty($setting) ? null : (empty($setting->logo2) ? null : Helper::showImage($setting->logo2)),
+            'logo' => empty($setting) ? null : (empty($setting->logo1) ? null : asset($setting->logo1)),
+            'logo2' => empty($setting) ? null : (empty($setting->logo2) ? null : asset($setting->logo2)),
         ];
 
         $data_form = SettingForm::where('status_card', 1)->orderBy('order_card', 'ASC')->get();
@@ -155,17 +155,17 @@ class PrintController extends Controller
             } elseif ($sur->initial == 'alamat') {
                 $val = $setting->address;
             } elseif ($sur->initial == 'logo1') {
-                $val = empty($setting->logo1) ? null : Helper::showImage('thumb/'.$setting->logo1);
+                $val = empty($setting->logo1) ? null : asset($setting->logo1);
             } elseif ($sur->initial == 'logo2') {
-                $val = empty($setting->logo2) ? null : Helper::showImage('thumb/'.$setting->logo2);
+                $val = empty($setting->logo2) ? null : asset($setting->logo2);
             } elseif ($sur->initial == 'prolog') {
                 $val = $setting->prologue;
             } elseif ($sur->initial == 'penutup') {
                 $val = $setting->closing;
             } elseif ($sur->initial == 'ttd_kepsek') {
-                $val = empty($setting->signature_headmaster) ? null : Helper::showImage('thumb/'.$setting->signature_headmaster);
+                $val = empty($setting->signature_headmaster) ? null : asset($setting->signature_headmaster);
             } elseif ($sur->initial == 'stempel') {
-                $val = empty($setting->stamp) ? null : Helper::showImage('thumb/'.$setting->stamp);
+                $val = empty($setting->stamp) ? null : asset($setting->stamp);
             } elseif ($sur->initial == 'nip_kepsek') {
                 $val = $setting->nip_headmaster;
             } elseif ($sur->initial == 'tempat_keputusan') {
@@ -224,7 +224,6 @@ class PrintController extends Controller
         if(request()->segment(4) == 'print'){
             return view('content.participant.print.result.v_print_result', compact('form', 'setting_form'));
         }elseif(request()->segment(4) == 'pdf'){
-            // return view('content.participant.print.result.v_print_pdf', compact('form', 'setting_form'));
             $pdf   = PDF::loadview('content.participant.print.result.v_print_pdf', compact('form', 'setting_form'));
             return $pdf->stream();
         }else{

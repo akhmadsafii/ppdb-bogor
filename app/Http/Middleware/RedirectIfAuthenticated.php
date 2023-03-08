@@ -28,7 +28,8 @@ class RedirectIfAuthenticated
         //     }
         // }
 
-        if (Auth::guard('admin')->check()) {
+        if (Auth::guard('admin')->check() || Auth::guard('supervisor')->check()) {
+        // if (Auth::guard('admin')->check()) {
             return redirect()->route('dashboard-admin');
         } else if (Auth::guard('participant')->check()) {
             return redirect()->route('dashboard-participant');
