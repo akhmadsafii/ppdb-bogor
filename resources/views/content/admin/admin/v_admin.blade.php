@@ -185,7 +185,6 @@
                     }
                 });
 
-
                 var table = $('#data-tabel').DataTable({
                     dom: "<'row'<'col-sm-9'B><'col-sm-3'f>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -194,10 +193,7 @@
                     serverSide: true,
                     responsive: true,
                     ajax: "",
-                    buttons: [{
-                        text: '<i class="fas fa-plus"></i> Tambah',
-                        className: 'btn btn-info btn-sm btn-add',
-                    }, ],
+                    buttons: buttons,
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -238,14 +234,16 @@
                         {
                             data: 'status',
                             name: 'status',
-                            className: 'align-middle'
+                            className: 'align-middle',
+                            visible: isVisibleColumns
                         },
                         {
                             data: 'action',
                             name: 'action',
                             orderable: false,
                             searchable: false,
-                            className: 'text-center align-middle'
+                            className: 'text-center align-middle',
+                            visible: isVisibleColumns
                         },
                     ]
                 });
@@ -396,7 +394,8 @@
                         success: function(data) {
                             $('#modal-title_detail').html("Detail {{ session('title') }}");
                             var script_html = ` <div class="d-flex align-items-center">`;
-                            script_html += `<img src="` + data.file + `" alt="" height="150" class="rounded mr-2">`;
+                            script_html += `<img src="` + data.file +
+                                `" alt="" height="150" class="rounded mr-2">`;
                             script_html += `<div class="w-100">
                                                 <div class="form-group row m-0">
                                                     <label class="col-md-4 col-form-label">Nama</label>

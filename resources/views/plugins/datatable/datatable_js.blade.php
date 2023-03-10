@@ -7,4 +7,14 @@
 <script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
 <link href="{{ asset('asset/css/datatable-custom.css') }}" rel="stylesheet" type="text/css">
-
+<script>
+    var check_guard = "{{ Auth::guard('admin')->check() }}";
+    var buttons = [];
+    if (check_guard) {
+        buttons.push({
+            text: '<i class="fas fa-plus"></i> Tambah',
+            className: 'btn btn-info btn-sm btn-add',
+        });
+    }
+    var isVisibleColumns = check_guard ? true : false;
+</script>

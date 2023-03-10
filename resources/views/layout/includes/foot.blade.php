@@ -7,5 +7,5 @@
 </script>
 <script src="{{ asset('asset/js/theme.js') }}"></script>
 <script src="{{ asset('asset/js/custom.js') }}"></script>
-@stack('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.0/metisMenu.min.js"></script>
+@stack('scripts')

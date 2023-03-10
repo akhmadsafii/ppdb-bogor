@@ -33,11 +33,11 @@ class DownloadController extends Controller
                 ->editColumn('file', function ($row) {
                     if (request()->segment(3) == 'file') {
                         $infoPath = pathinfo($row['file']);
-                        return '<a href="' . Storage::disk('s3')->temporaryUrl($row->file, '+2 minutes') . '" target="_blank">Lihat File </a>.' . $infoPath['extension'];
+                        return '<a href="' . asset($row->file) . '" target="_blank">Lihat File </a>.' . $infoPath['extension'];
                     } else {
                         $img = '<img class="rounded" height="40" src="' . asset('asset/image/default.jpg') . '" alt="user">';
                         if ($row['file'] != null) {
-                            $img = '<a href="' . Storage::disk('s3')->temporaryUrl($row->file, '+2 minutes') . '" target="_blank"><img class="rounded" width="55" src="' . Storage::disk('s3')->temporaryUrl('thumb/' . $row->file, '+2 minutes') . '" alt="user"></a>';
+                            $img = '<img class="rounded" width="55" src="' . asset($row->file) . '" alt="user">';
                         }
                         return $img;
                     }

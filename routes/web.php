@@ -62,6 +62,10 @@ Route::get('announcement', [ControllersAnnouncementController::class, 'index'])-
 Route::prefix('announcement')->name('public_announcement.')->group(function () {
     Route::get('preview', [ControllersAnnouncementController::class, 'preview'])->name('preview');
 });
+Route::get('score', [ControllersAnnouncementController::class, 'score'])->name('public_score');
+// Route::prefix('score')->name('public_announcement.')->group(function () {
+//     Route::get('preview', [ControllersAnnouncementController::class, 'preview'])->name('preview');
+// });
 
 Route::get('schedule', [ControllersScheduleController::class, 'index'])->name('public_schedule');
 Route::get('selection', [SelectionController::class, 'index'])->name('public_selection');
@@ -100,9 +104,6 @@ Route::middleware('auth:supervisor,admin')->group(function () {
             Route::get('delete', [SupervisorController::class, 'delete'])->name('delete');
             Route::get('detail', [SupervisorController::class, 'detail'])->name('detail');
             Route::get('update-status', [SupervisorController::class, 'update_status'])->name('update_status');
-            // Route::get('edit', [SupervisorController::class, 'edit'])->name('edit');
-            // Route::post('update-profile', [SupervisorController::class, 'update_profile'])->name('update_profile');
-            // Route::post('update-password', [SupervisorController::class, 'update_password'])->name('update_password');
         });
 
         Route::get('participant', [ParticipantController::class, 'index'])->name('account_participant');

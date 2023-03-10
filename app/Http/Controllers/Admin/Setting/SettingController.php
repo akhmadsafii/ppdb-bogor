@@ -62,6 +62,10 @@ class SettingController extends Controller
             if ($request->status_open) {
                 $status_open = 0;
             }
+            $semester = '';
+            if ($request->semester) {
+                $semester = implode(',', $request->semester);
+            }
 
             $data = [
                 'name_school' => $request->name_school,
@@ -93,6 +97,7 @@ class SettingController extends Controller
                 'phone' => $request->phone,
                 'degree' => $request->degree,
                 'nip_headmaster' => $request->nip_headmaster,
+                'semester' => $semester,
             ];
 
             if ($request->hasFile('logo_school')) {

@@ -49,8 +49,18 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="{{ route('public_announcement') }}"><i class="material-icons list-icon">feedback</i><span
+                {{-- <li><a href="{{ route('public_announcement') }}"><i class="material-icons list-icon">feedback</i><span
                             class="hide-menu">Pengumuman</span></a>
+                </li> --}}
+                <li class="menu-item-has-children"><a href="javascript:void(0);" class="ripple">
+                        <i class="material-icons list-icon">feedback</i>
+                        <span class="hide-menu">Pengumuman</span></a>
+                    <ul class="list-unstyled sub-menu collapse" aria-expanded="false">
+                        <li><a href="{{ route('public_announcement') }}">Informasi</a>
+                        </li>
+                        <li><a href="{{ route('public_score') }}">Nilai Siswa</a>
+                        </li>
+                    </ul>
                 </li>
                 <li><a href="{{ route('public_selection') }}"><i class="material-icons list-icon">list</i><span
                             class="hide-menu">Seleksi PPDB

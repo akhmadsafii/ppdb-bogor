@@ -32,7 +32,7 @@ class ParticipantController extends Controller
                 ->editColumn('image', function ($row) {
                     $img = '<img class="rounded" height="40" src="' . asset('asset/image/user.png') . '" alt="user">';
                     if ($row['file'] != 'user.png') {
-                        $img = '<a href="' . Storage::disk('s3')->temporaryUrl($row->file, '+2 minutes') . '" target="_blank"><img class="rounded" width="55" src="' . Storage::disk('s3')->temporaryUrl('thumb/' . $row->file, '+2 minutes') . '" alt="user"></a>';
+                        $img = '<img class="rounded" width="55" src="' . asset($row->file) . '" alt="user">';
                     }
                     return $img;
                 })

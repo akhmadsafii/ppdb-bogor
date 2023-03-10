@@ -137,10 +137,7 @@
                     serverSide: true,
                     responsive: true,
                     ajax: "",
-                    buttons: [{
-                        text: '<i class="fas fa-plus"></i> Tambah',
-                        className: 'btn btn-info btn-sm btn-add',
-                    }, ],
+                    buttons: buttons,
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -181,14 +178,16 @@
                         {
                             data: 'status',
                             name: 'status',
-                            className: 'align-middle'
+                            className: 'align-middle',
+                            visible: isVisibleColumns
                         },
                         {
                             data: 'action',
                             name: 'action',
                             orderable: false,
                             searchable: false,
-                            className: 'text-center align-middle'
+                            className: 'text-center align-middle',
+                            visible: isVisibleColumns
                         },
                     ]
                 });

@@ -49,6 +49,7 @@ class CreateSettingsTable extends Migration
             $table->string('latitude')->nullable();
             $table->string('whatsapp')->nullable();
             $table->integer('max_distance')->nullable();
+            $table->string('semester')->nullable();
             $table->tinyInteger('auto_number')->default(1);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();

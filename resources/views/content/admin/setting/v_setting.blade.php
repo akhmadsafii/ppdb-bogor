@@ -2,6 +2,7 @@
 @section('content')
     @push('styles')
         @include('plugins.tags.tags_css')
+        @include('plugins.select2.select2_css')
         @include('plugins.datetime.datetime_css')
     @endpush
     <div class="row page-title clearfix">
@@ -211,6 +212,30 @@
                                         <input type="text" name="phone" id="phone" class="form-control"
                                             value="{{ $setting ? $setting['phone'] : '' }}">
                                     </div>
+                                    <div class="form-group">
+                                        <label for="">Semester yang ingin ditampilkan <span
+                                                class="text-danger">*</span></label>
+                                        @php
+                                            $semester = [];
+                                            if ($setting && $setting['semester']) {
+                                                $semester = explode(',', $setting['semester']);
+                                            }
+                                            $arrayData = [];
+                                        @endphp
+
+                                        @foreach ($semester as $sms)
+                                            @php $arrayData[$sms] = $sms @endphp
+                                        @endforeach
+                                        <select multiple="multiple" class="select2" name="semester[]" id="semester">
+                                            <option value="1" @if (in_array(1, $arrayData)) selected @endif>
+                                                Semester 1</option>
+                                            <option value="2" @if (in_array(2, $arrayData)) selected @endif>Semester 2</option>
+                                            <option value="3" @if (in_array(3, $arrayData)) selected @endif>Semester 3</option>
+                                            <option value="4" @if (in_array(4, $arrayData)) selected @endif>Semester 4</option>
+                                            <option value="5" @if (in_array(5, $arrayData)) selected @endif>Semester 5</option>
+                                            <option value="6" @if (in_array(6, $arrayData)) selected @endif>Semester 6</option>
+                                        </select>
+                                    </div>
 
 
                                 </div>
@@ -325,6 +350,7 @@
         <script src="{{ asset('asset/custom/onlyNumber.js') }}"></script>
         @include('plugins.sweetalert.sweetalert_js')
         @include('plugins.tags.tags_js')
+        @include('plugins.select2.select2_js')
         @include('plugins.datetime.datetime_js')
         <script type="text/javascript">
             $(function() {
@@ -335,9 +361,9 @@
                 });
 
                 $('body').on('submit', '#formSubmit', function(e) {
-                    $("#btnSubmit").html(
-                        '<i class="fa fa-spin fa-sync"></i> Memproses');
-                    $("#btnSubmit").attr("disabled", true);
+                    // $("#btnSubmit").html(
+                    //     '<i class="fa fa-spin fa-sync"></i> Memproses');
+                    // $("#btnSubmit").attr("disabled", true);
                     e.preventDefault();
                     var formData = new FormData(this);
                     $.ajax({
