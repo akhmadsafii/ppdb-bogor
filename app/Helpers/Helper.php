@@ -2,14 +2,15 @@
 
 namespace App\Helpers;
 
-use App\Models\Participant;
 use App\Models\PaymentParticipant;
-use App\Models\Setting;
 use App\Models\SettingPayment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Image;
 use Auth;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class Helper
 {
@@ -197,5 +198,12 @@ class Helper
     {
         $pool = '0123456789';
         return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+    }
+
+    public static function paginate($items, $perPage, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

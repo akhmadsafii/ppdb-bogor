@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Announcement;
 use App\Models\Registration;
 use App\Models\Setting;
@@ -27,6 +28,7 @@ class AnnouncementController extends Controller
 
     public function score()
     {
+        session()->put('title', 'Daftar Nilai Siswa');
         $setting = Setting::first();
         $semester = [];
         $amount_semester = 1;
@@ -48,17 +50,7 @@ class AnnouncementController extends Controller
             $mapel[] = trim(substr($mp['course'], 0, -17));
         }
         $course = array_unique($mapel);
-        // $registration = Registration::join('setting_forms as sf', 'sf.id', '=', 'registrations.id_form')
-        //     ->join('setting_type_forms as stf', 'stf.id', '=', 'sf.id_type')
-        //     ->join('participants as pr', 'pr.id', '=', 'registrations.id_participant')
-        //     ->where('stf.initial', 'nilai_mapel_raport')
-        //     ->where(function ($query) use ($semester) {
-        //         foreach ($semester as $keyword) {
-        //             $query->orWhere('sf.initial', 'like', '%semester_' . $keyword);
-        //         }
-        //     })
-        //     ->select('registrations.value as score', 'pr.name as participant', 'sf.name as course',  DB::raw('substr(sf.initial, -1) as semester'))->orderBy('participant')->orderBy('semester')->get();
-        // dd($registration);
+
         $participants = Registration::join('participants as pr', 'pr.id', '=', 'registrations.id_participant')
             ->select('pr.id as id_participant', 'pr.name as participant')
             ->groupBy('pr.id', 'pr.name')->get();
@@ -90,6 +82,8 @@ class AnnouncementController extends Controller
                         'id_participant' => $sc->id_participant,
                     ];
                 }
+
+
                 // $score_smt = collect($list)->pluck('score');
                 $registration[] = [
                     'participant' => $participant->participant,
@@ -102,17 +96,29 @@ class AnnouncementController extends Controller
             }
         }
 
-        $temp = [];
-        foreach ($registration as $value) {
-            if (!array_key_exists($value['id_participant'], $temp)) {
-                $temp[$value['id_participant']] = 0;
-            }
-            //Add up the values from each color
-            $temp[$value['id_participant']] += $value['score_smt'];
+        $result = array();
+        foreach($registration as $k => $v) {
+            $id = $v['id_participant'];
+            $result[$id][] = $v['score_smt'];
         }
-        // dd($temp[1]);
-        // $tes = $registration->paginate(1);
-        // dd(array_merge_recursive($registration, $temp));
-        return view('content.public.v_score', compact('registration', 'amount_semester', 'semester', 'course', 'temp'));
+
+        $tes = [];
+        // $result = [];
+        foreach($registration as $key => $rg){
+            $id = $rg['id_participant'];
+            $tes[] = [
+                'participant' => $rg['participant'],
+                    'id_participant' => $rg['id_participant'],
+                    'semester' => $rg['semester'],
+                    'amount_smt' => $rg['amount_smt'],
+                    'score_smt' => $rg['score_smt'],
+                    'score' => $rg['score'],
+                    'total' => array_sum($result[$id])
+            ];
+        }
+        $full_registration = collect($tes)->sortByDesc('total');
+        $registrations = Helper::paginate($full_registration, $amount_semester * 20)->setPath(route('public_score'));
+        // dd($registrations);
+        return view('content.public.v_score', compact('registrations', 'amount_semester', 'semester', 'course'));
     }
 }

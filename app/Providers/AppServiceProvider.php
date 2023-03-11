@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Banner;
 use App\Models\Message;
 use App\Models\Setting;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -30,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // Model::preventLazyLoading(!$this->app->isProduction());
+
+        Paginator::useBootstrap();
 
         View()->composer(['content.participant.v_dashboard', 'content.admin.v_dashboard', 'layout.public.nav_menu'], function ($view) {
             return Cache::remember('setting', 60, function () use ($view) {

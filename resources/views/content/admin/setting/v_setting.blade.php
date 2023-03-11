@@ -361,9 +361,9 @@
                 });
 
                 $('body').on('submit', '#formSubmit', function(e) {
-                    // $("#btnSubmit").html(
-                    //     '<i class="fa fa-spin fa-sync"></i> Memproses');
-                    // $("#btnSubmit").attr("disabled", true);
+                    $("#btnSubmit").html(
+                        '<i class="fa fa-spin fa-sync"></i> Memproses');
+                    $("#btnSubmit").attr("disabled", true);
                     e.preventDefault();
                     var formData = new FormData(this);
                     $.ajax({

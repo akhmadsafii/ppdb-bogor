@@ -25,36 +25,47 @@
                                 <table class="table table-hover table-bordered">
                                     <thead>
                                         <tr class="table-secondary">
+                                            <th class="text-center">Ranking</th>
                                             <th>Siswa</th>
                                             <th class="text-center">Semester</th>
                                             @foreach ($course as $cs)
                                                 <th class="text-center">{{ $cs }}</th>
                                             @endforeach
-                                            <th class="text-center">Jumlah Per Semester</th>
+                                            <th class="text-center">Jumlah</th>
                                             <th class="text-center">Total Akhir</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($registration as $key => $reg)
+                                        @php
+                                            $no = 0;
+                                        @endphp
+                                        @foreach ($registrations as $key => $reg)
                                             <tr>
-                                                @if ($key == 0 || $key % $reg['amount_smt'] == 0)
+                                                @if ($key % $reg['amount_smt'] == 0)
+                                                    <td rowspan="{{ $reg['amount_smt'] }}" class="align-middle text-center">
+                                                        {{ $no += 1 }}</td>
+                                                @endif
+                                                @if ($key % $reg['amount_smt'] == 0)
                                                     <td rowspan="{{ $reg['amount_smt'] }}" class="align-middle">
                                                         {{ $reg['participant'] }}</td>
                                                 @endif
-                                                <td>{{ $reg['semester'] }}</td>
+
+                                                <td class="text-center">{{ $reg['semester'] }}</td>
                                                 @foreach ($reg['score'] as $score)
                                                     <td class="text-center">{{ $score['score'] }}</td>
                                                 @endforeach
-                                                <td>{{ $reg['score_smt'] }}</td>
-                                                @if ($key == 0 || $key % $reg['amount_smt'] == 0)
+                                                <td class="text-center">{{ $reg['score_smt'] }}</td>
+                                                @if ($key % $reg['amount_smt'] == 0)
                                                     <td rowspan="{{ $reg['amount_smt'] }}" class="align-middle text-center">
-                                                        {{ $temp[$reg['id_participant']] }}
-                                                    </td>
+                                                        {{ $reg['total'] }}</td>
                                                 @endif
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                {{ $registrations->links() }}
                             </div>
                         </div>
                     </div>
