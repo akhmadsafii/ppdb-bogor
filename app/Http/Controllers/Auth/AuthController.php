@@ -92,18 +92,19 @@ class AuthController extends Controller
 
         $rules = [
             'name' => ['required', "regex:/^[a-zA-Z .,']+$/"],
-            'nisn' => ['required'],
+            'nisn' => ['required','unique:participants', 'digits_between:5,10'],
             'gender' => ['required'],
             'phone' => ['required'],
-            'email' => ['required'],
+            'email' => ['required','unique:participants'],
             'password' => ['required'],
             // 'longitude' => ['required'],
             // 'latitude' => ['required'],
         ];
 
         $messages = [
-            'email' => ':attribute tidak valid.',
+            // 'email' => ':attribute tidak valid.',
             'required' => ':attribute harus diisi.',
+            'unique' => ':attribute Sudah pernah terdaftar.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);
