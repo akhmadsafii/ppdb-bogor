@@ -21,10 +21,17 @@ class SelectionController extends Controller
         $participant = Participant::whereIn('id', $participant_registration)->where('decision', 1)->get();
         $data = [];
         foreach ($participant as $prt) {
+            $school_origin = collect($registration)->where('id_participant', $prt->id)->where('id_form', 49)->first();
+            if($school_origin){
+                $school = $school_origin['value'];
+            }else{
+                $school = NULL;
+            }
+
             $data[] = array(
                 'name' => $prt->name,
                 'nisn' => $prt->nisn,
-                'school_origin' => collect($registration)->where('id_participant', $prt->id)->where('id_form', 49)->first(),
+                'school_origin' => $school,
             );
         }
         // dd($data);

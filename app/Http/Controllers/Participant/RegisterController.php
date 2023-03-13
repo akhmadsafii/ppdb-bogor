@@ -72,16 +72,18 @@ class RegisterController extends Controller
                     $val = empty($setting) ? null : (empty($setting->track_ppdb) ? 'zonasi' : $setting->track_ppdb);
                 } elseif ($reg->initial == 'nomor_pendaftaran') {
                     $number = empty($setting) ? null : $setting->auto_number;
+                    // dd($number);
                     if ($number == null) {
                         $val = null;
                     } elseif ($number != 1) {
                         $val = null;
                     } else {
                         $id_form = SettingForm::where('initial', '=', 'nomor_pendaftaran')->first()->id;
+                        // dd($id_form);
                         $participant_register = Registration::where([
                             ['id_form', $id_form],
                             ['school_year', 'like', "$year%"]
-                        ])->orderBy('value', 'DESC')->first();
+                        ])->orderByRaw('CONVERT(value, SIGNED) desc')->first();
                         $val = empty($participant_register) ? 1 : (empty($participant_register->value) ? 1 :  (int)$participant_register->value + 1);
                     }
                 } else {

@@ -73,7 +73,7 @@ class AnnouncementController extends Controller
                 $list = [];
                 $total_smt = 0;
                 foreach ($score as $sc) {
-                    $total_smt += $sc->score;
+                    $total_smt += (float)$sc->score;
                     $list[] = [
                         'semester' => $smt,
                         'score' => $sc->score,
