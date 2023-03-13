@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-md-12 widget-holder">
                 <div class="widget-bg">
-                    <div class="widget-heading clearfix">
+                    <div class="widget-heading clearfix m-0" style="border: 4px solid;">
                         <div class="table-responsive">
                             <table style="width: 100%;">
                                 <thead>
