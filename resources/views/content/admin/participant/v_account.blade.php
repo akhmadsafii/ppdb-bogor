@@ -193,9 +193,9 @@
                 });
 
                 $(document).on('click', '.reset_pass', function() {
+                    $('#formSubmit').trigger("reset");
                     var id = $(this).data('id');
                     $('#id_participant').val(id);
-                    $('#formSubmit').trigger("reset");
                     $('#modal-title').html("Reset Password");
                     $('#modalForm').modal('show');
                 });
