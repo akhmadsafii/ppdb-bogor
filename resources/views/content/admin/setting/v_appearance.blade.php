@@ -43,14 +43,14 @@
                                     <label for="validationServer01">Format Inputan Gambar yang diijinkan <small
                                             class="text-danger ml-2">*Gunakan enter untuk pilihan multiple</small></label>
                                     <input type="text" class="form-control" data-role="tagsinput" name="format_image"
-                                        value="{{ str_replace('|', ',', $setting['format_image']) }}">
+                                        value="{{ $setting['format_image'] }}">
 
                                 </div>
                                 <div class="col-md-6 mb-3 input-has-value">
                                     <label for="validationServer01">Format Inputan File yang diijinkan <small
                                             class="text-danger ml-2">*Gunakan enter untuk pilihan multiple</small></label>
                                     <input type="text" class="form-control" data-role="tagsinput" name="format_file"
-                                        value="{{ str_replace('|', ',', $setting['format_file']) }}">
+                                        value="{{ $setting['format_file'] }}">
                                 </div>
                                 <div class="col-md-6 mb-3 input-has-value">
                                     <label for="validationServer01">Maksimal Ukuran Upload (KB)</label>
@@ -79,15 +79,8 @@
                                 </div> --}}
                                 <div class="col-md-6 mb-3 input-has-value">
                                     <label for="validationServer01">Resolusi Gambar Thumbnail (Pixels)</label>
-                                    @php
-                                        $res = explode('|', $setting['resolution']);
-                                    @endphp
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="resolution[]"
-                                            value="{{ $res[0] }}" placeholder="Width Pixels">
-                                        <input type="text" class="form-control" name="resolution[]"
-                                            value="{{ $res[1] }}" placeholder="Height Pixels">
-                                    </div>
+                                    <input type="text" class="form-control" name="size_compress" id="size_compress"
+                                        value="{{ $setting['size_compress'] }}">
                                 </div>
                                 <div class="col-md-6 mb-3 input-has-value">
                                     <label for="validationServer01">Footer</label>

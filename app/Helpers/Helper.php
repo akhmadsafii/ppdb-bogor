@@ -2,15 +2,14 @@
 
 namespace App\Helpers;
 
+use App\Models\Participant;
 use App\Models\PaymentParticipant;
+use App\Models\Setting;
 use App\Models\SettingPayment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Image;
 use Auth;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class Helper
 {
@@ -138,8 +137,8 @@ class Helper
 
     public static function getDistanceBetween($latitude1, $longitude1, $latitude2, $longitude2, $unit = 'Mi')
     {
-        $theta = $longitude1 - $longitude2;
-        $distance = (sin(deg2rad($latitude1)) * sin(deg2rad($latitude2))) + (cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * cos(deg2rad($theta)));
+        $theta = (float)$longitude1 - (float)$longitude2;
+        $distance = (sin(deg2rad((float)$latitude1)) * sin(deg2rad((float)$latitude2))) + (cos(deg2rad((float)$latitude1)) * cos(deg2rad((float)$latitude2)) * cos(deg2rad((float)$theta)));
         $distance = acos($distance);
         $distance = rad2deg($distance);
         $distance = $distance * 60 * 1.1515;
@@ -198,12 +197,5 @@ class Helper
     {
         $pool = '0123456789';
         return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
-    }
-
-    public static function paginate($items, $perPage, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

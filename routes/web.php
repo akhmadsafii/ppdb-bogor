@@ -65,7 +65,7 @@ Route::prefix('announcement')->name('public_announcement.')->group(function () {
 Route::get('score', [ControllersAnnouncementController::class, 'score'])->name('public_score');
 // Route::prefix('score')->name('public_announcement.')->group(function () {
 //     Route::get('preview', [ControllersAnnouncementController::class, 'preview'])->name('preview');
-// });
+// }); 
 
 Route::get('schedule', [ControllersScheduleController::class, 'index'])->name('public_schedule');
 Route::get('selection', [SelectionController::class, 'index'])->name('public_selection');

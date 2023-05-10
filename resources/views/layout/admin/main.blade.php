@@ -4,22 +4,26 @@
 <head>
     @include('layout.includes.head')
     @stack('styles')
+    @php
+        $setting = json_decode(file_get_contents(storage_path('app/settings.json')), true);
+    @endphp
+
     <style>
         .swal-text {
             text-align: center;
         }
 
         .bg-custom {
-            background-color: {{ env('SETTING_BACKGROUND') }};
+            background-color: {{ $setting['background'] }};
         }
 
         .text-custom {
-            color: {{ env('SETTING_COLOR') }} !important;
+            color: {{ $setting['color'] }} !important;
         }
 
         .side-menu li:hover,
         .side-menu li.active {
-            background: {{ env('SETTING_BACKGROUND_ACTIVE') }};
+            background: {{ $setting['background_active'] }};
         }
 
         .modal-header {

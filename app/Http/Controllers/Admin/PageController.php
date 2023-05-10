@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PageController extends Controller
@@ -37,8 +38,9 @@ class PageController extends Controller
             'content' => 'Isi',
         ];
 
-        $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
-        $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_IMAGE'));
+        $setting = json_decode(Storage::get('settings.json'), true);
+        $max_size = 'max:' . $setting['max_upload'];
+        $mimes = 'mimes:' . $setting['format_image'];
         $rules = [
             'file' => ['image', $mimes, $max_size],
             'title' => ['required'],
@@ -48,7 +50,7 @@ class PageController extends Controller
         $messages = [
             'required' => ':attribute harus diisi.',
             'mimes' => 'Format tipe gambar :attribute yang diupload tidak diperbolehkan',
-            'max' => 'Ukuran maksimal file ' . env('SETTING_MAX_UPLOAD_IMAGE') / 1000 . ' MB',
+            'max' => 'Ukuran maksimal file ' . $setting['max_upload'] / 1000 . ' MB',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);
@@ -64,16 +66,8 @@ class PageController extends Controller
                 'content' => $request->content
             ];
 
-            if (!empty($request->file)) {
-                if ($request->id != null) {
-                    $page = Page::find($request->id);
-                    Helper::delete_aws($page->file);
-                }
-                if($request->link == 'greeting'){
-                    $data = Helper::upload_aws($request, 'file', 'ppdb/image/page/', $data, '300|400', '300|400');
-                }else{
-                    $data = Helper::upload_aws($request, 'file', 'ppdb/image/page/', $data, '1000|750', '1000|750');
-                }
+            if ($request->hasFile('file')) {
+                $data = ImageHelper::upload_asset($request, 'file', 'page', $data);
             }
             Page::updateOrCreate(
                 ['link' => $request->link],

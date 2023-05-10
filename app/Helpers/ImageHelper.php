@@ -3,18 +3,24 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Image;
 use Yaza\LaravelGoogleDriveStorage\Gdrive;
 
 class ImageHelper
 {
+    public static function get_settings()
+    {
+        return json_decode(Storage::get('settings.json'), true);
+    }
+
     public static function upload_asset($request, $name, $path, $data)
     {
+        $setting = self::get_settings();
         $file = $request->file($name);
         $profileImage = date('YmdHis') . Helper::no_random(5) . "." . $file->getClientOriginalExtension();
-        $resolution = explode('|', env('SETTING_RESOLUTION'));
-        // dd($resolution);
-        $thumb = Image::make($file->getRealPath())->resize($resolution[0], $resolution[1], function ($constraint) {
+        $resolution = isset($setting['size_compress']) ? $setting['size_compress'] : 200;
+        $thumb = Image::make($file->getRealPath())->resize($resolution, $resolution, function ($constraint) {
             $constraint->aspectRatio();
         });
         $destination = public_path($path);
@@ -26,11 +32,11 @@ class ImageHelper
 
     public static function upload_asset_drive($request, $name, $path, $data)
     {
-        // $asset = ImageHelper::upload_asset($request, $name, $path, $data);
+        $setting = self::get_settings();
         $file = $request->file($name);
         $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
-        $resolution = explode('|', env('SETTING_RESOLUTION'));
-        $thumb = Image::make($file->getRealPath())->resize($resolution[0], $resolution[1], function ($constraint) {
+        $resolution = isset($setting['size_compress']) ? $setting['size_compress'] : 200;
+        $thumb = Image::make($file->getRealPath())->resize($resolution, $resolution, function ($constraint) {
             $constraint->aspectRatio();
         });
         $destination = public_path($path);
@@ -72,9 +78,10 @@ class ImageHelper
 
     public static function upload_multiple_asset_drive($file, $path)
     {
+        $setting = self::get_settings();
         $profileImage = date('YmdHis') . Helper::str_random(5) . "." . $file->getClientOriginalExtension();
-        $resolution = explode('|', env('SETTING_RESOLUTION'));
-        $thumb = Image::make($file->getRealPath())->resize($resolution[0], $resolution[1], function ($constraint) {
+        $resolution = isset($setting['size_compress']) ? $setting['size_compress'] : 200;
+        $thumb = Image::make($file->getRealPath())->resize($resolution, $resolution, function ($constraint) {
             $constraint->aspectRatio();
         });
         $destination = public_path($path);

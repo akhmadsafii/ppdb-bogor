@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Models\SettingTypeForm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SettingController extends Controller
@@ -30,8 +31,10 @@ class SettingController extends Controller
             // 'logo_school' => 'Logo Sekolah',
         ];
 
-        $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
-        $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_IMAGE'));
+        $setting = json_decode(Storage::get('settings.json'), true);
+        $max_size = 'max:' . $setting['max_upload'];
+        $mimes = 'mimes:' . $setting['format_image'];
+
         // dd($mimes);
         $rules = [
             'logo1' => ['image', $mimes, $max_size],
@@ -47,7 +50,7 @@ class SettingController extends Controller
         $messages = [
             'required' => ':attribute harus diisi.',
             'mimes' => 'Format tipe gambar :attribute yang diupload tidak diperbolehkan',
-            'max' => 'Ukuran maksimal file ' . env('SETTING_MAX_UPLOAD_IMAGE') / 1000 . ' MB',
+            'max' => 'Ukuran maksimal file ' . $setting['max_upload'] / 1000 . ' MB',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\Helper;
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
@@ -54,8 +55,9 @@ class AnnouncementController extends Controller
             'content' => 'Isi Pengumuman',
         ];
 
-        $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
-        $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_IMAGE'));
+        $setting = json_decode(Storage::get('settings.json'), true);
+        $max_size = 'max:' . $setting['max_upload'];
+        $mimes = 'mimes:' . $setting['format_image'];
         $rules = [
             'file' => ['image', $mimes, $max_size],
             'title' => ['required', "regex:/^[a-zA-Z .,']+$/"],
@@ -65,7 +67,7 @@ class AnnouncementController extends Controller
         $messages = [
             'required' => ':attribute harus diisi.',
             'mimes' => 'Format tipe gambar :attribute yang diupload tidak diperbolehkan',
-            'max' => 'Ukuran maksimal file ' . env('SETTING_MAX_UPLOAD_IMAGE') / 1000 . ' MB',
+            'max' => 'Ukuran maksimal file ' . $setting['max_upload'] / 1000 . ' MB',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);
@@ -83,12 +85,8 @@ class AnnouncementController extends Controller
                 'status' => $request->status,
             ];
 
-            if (!empty($request->file)) {
-                if ($request->id != null) {
-                    $announcement = Announcement::find($request->id);
-                    Helper::delete_aws($announcement->file);
-                }
-                $data = Helper::upload_aws($request, 'file', 'ppdb/image/announcement/', $data, '750|400', '500|500');
+            if ($request->hasFile('file')) {
+                $data = ImageHelper::upload_asset($request, 'file', 'announcement', $data);
             }
             Announcement::updateOrCreate(
                 ['id' => $request->id],
@@ -116,7 +114,7 @@ class AnnouncementController extends Controller
     {
         $announcement = Announcement::find($request->id);
         $announcement->update(array('status' => 0));
-        Helper::delete_aws($announcement->file);
+        // Helper::delete_aws($announcement->file);
         return response()->json([
             'message' => 'Data Pengumuman berhasil dihapus',
             'status' => true,

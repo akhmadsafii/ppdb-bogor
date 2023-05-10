@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Helpers\Helper;
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Download;
 use Illuminate\Http\Request;
@@ -64,16 +65,19 @@ class DownloadController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
+        // dd($request->type);
         $customAttributes = [
             'name' => 'Nama',
             'description' => 'Deskripsi',
         ];
 
-        $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
-        $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_IMAGE'));
+        $setting = json_decode(Storage::get('settings.json'), true);
+        $max_size = 'max:' . $setting['max_upload'];
+        // $mimes = 'mimes:' . $setting['format_image'];
         if ($request->type == 'file') {
-            $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_FILE'));
+            $mimes = 'mimes:' . $setting['format_file'];
+        }else{
+            $mimes = 'mimes:' . $setting['format_image'];
         }
         // dd($mimes);
         $image = ['file', $mimes, $max_size];
@@ -89,7 +93,7 @@ class DownloadController extends Controller
         $messages = [
             'required' => ':attribute harus diisi.',
             'mimes' => 'Format tipe gambar :attribute yang diupload tidak diperbolehkan',
-            'max' => 'Ukuran maksimal file ' . env('SETTING_MAX_UPLOAD_IMAGE') / 1000 . ' MB',
+            'max' => 'Ukuran maksimal file ' . $setting['max_upload'] / 1000 . ' MB',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);
@@ -107,21 +111,12 @@ class DownloadController extends Controller
                 'type' => $request->type,
             ];
             if ($request->type == 'file') {
-                if (!empty($request->file)) {
-                    if ($request->id != null) {
-                        $download = Download::find($request->id);
-                        Helper::delete_file_aws($download->file);
-                    }
-
-                    $data = Helper::upload_file_aws($request, 'file', 'ppdb/file/download/', $data);
+                if ($request->hasFile('file')) {
+                    $data = ImageHelper::upload_file($request, 'file', 'document', $data);
                 }
             } else {
-                if (!empty($request->file)) {
-                    if ($request->id != null) {
-                        $download = Download::find($request->id);
-                        Helper::delete_aws($download->file);
-                    }
-                    $data = Helper::upload_aws($request, 'file', 'ppdb/image/download/', $data, '500|750', '500|750');
+                if ($request->hasFile('file')) {
+                    $data = ImageHelper::upload_asset($request, 'file', 'image', $data);
                 }
             }
             Download::updateOrCreate(
@@ -160,11 +155,6 @@ class DownloadController extends Controller
     {
         $download = Download::find($request->id);
         $download->update(array('status' => 0));
-        if ($download->type == 'file') {
-            Helper::delete_file_aws($download->file);
-        } else {
-            Helper::delete_aws($download->file);
-        }
         return response()->json([
             'message' => 'Data berhasil dihapus',
             'status' => true,

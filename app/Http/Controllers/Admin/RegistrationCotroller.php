@@ -26,48 +26,56 @@ class RegistrationCotroller extends Controller
         $data = [];
         $years = Registration::groupBy('school_year')->select('school_year')->get();
         $setting = Setting::first();
-        // dd($setting);
-        $lat_school = empty($setting) ? 0 : (empty($setting->latitude) ? 0 : $setting->latitude);
-        $long_school = empty($setting) ? 0 : (empty($setting->longitude) ? 0 : $setting->longitude);
-        $year = empty($setting) ? null : (empty($setting->school_year) ? null : $setting->school_year);
+        $lat_school = optional($setting)->latitude ?? 0;
+        $long_school = optional($setting)->longitude ?? 0;
+        $year = optional($setting)->school_year ?? null;
         $fix_year = $request->school_year ?? $year;
-        $registration = Registration::where('school_year', $fix_year)->get();
-        $participant_registration = $registration->pluck('id_participant');
-        $participant = Participant::whereIn('id', $participant_registration);
 
-        if ($_GET['based'] == 'pending') {
-            $participant->where('decision', 2);
+        $participantQuery = Participant::query()
+            ->with(['registrations' => function ($query) use ($fix_year) {
+                $query->where('school_year', $fix_year)
+                    ->whereIn('id_form', [49, 6]);
+            }])
+            ->whereHas('registrations', function ($query) use ($fix_year) {
+                $query->where('school_year', $fix_year);
+            });
+
+        if (request()->query('based') == 'pending') {
+            $participantQuery->where('decision', 2);
         }
-        if ($_GET['based'] == 'rejected') {
-            $participant->where('decision', 3);
+
+        if (request()->query('based') == 'rejected') {
+            $participantQuery->where('decision', 3);
         }
-        if ($_GET['based'] == 'approved') {
-            $participant->where('decision', 1);
+
+        if (request()->query('based') == 'approved') {
+            $participantQuery->where('decision', 1);
         }
-        $participant = $participant->get();
-        // dd($participant);
-        foreach ($participant as $prt) {
-            $school_origin = collect($registration)->where('id_participant', $prt->id)->where('id_form', 49)->first();
-            $lane_register = collect($registration)->where('id_participant', $prt->id)->where('id_form', 6)->first();
-            $lat = empty($prt) ? 0 : (empty($prt->latitude) ? 0 : $prt->latitude);
-            $lon = empty($prt) ? 0 : (empty($prt->longitude) ? 0 : $prt->longitude);
-            $distance = Helper::getDistanceBetween($lat, $lon, $lat_school, $long_school);
-            $data[] = [
-                'id' => $prt->id,
-                'file' => $prt->file,
-                'name' => $prt->name,
-                'email' => $prt->email,
-                'nisn' => $prt->nisn,
-                'school_origin' => empty($school_origin) ? null : $school_origin->value,
-                'distance' => $distance,
-                'decision' => $prt->decision,
-                'status' => $prt->status,
-                'school_year' => $fix_year,
-                'lane_register' => empty($lane_register) ? null : $lane_register->value,
-            ];
-        }
-        // dd($data);
+
+
         if ($request->ajax()) {
+            $participants = $participantQuery->paginate(150);
+            $data = $participants->map(function ($prt) use ($lat_school, $long_school, $fix_year) {
+                $school_origin = $prt->registrations->firstWhere('id_form', 49);
+                $lane_register = $prt->registrations->firstWhere('id_form', 6);
+                $lat = $prt->latitude ?? 0;
+                $lon = $prt->longitude ?? 0;
+                $distance = 0;
+
+                return [
+                    'id' => $prt->id,
+                    'file' => $prt->file,
+                    'name' => $prt->name,
+                    'email' => $prt->email,
+                    'nisn' => $prt->nisn,
+                    'school_origin' => optional($school_origin)->value,
+                    'distance' => $distance,
+                    'decision' => $prt->decision,
+                    'status' => $prt->status,
+                    'school_year' => $fix_year,
+                    'lane_register' => optional($lane_register)->value,
+                ];
+            });
             return DataTables::of($data)->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<div class="btn-group" role="group" aria-label="Horizontal Button Group">';
@@ -81,7 +89,7 @@ class RegistrationCotroller extends Controller
                 ->editColumn('image', function ($row) {
                     $img = '<img class="rounded" height="40" src="' . asset('asset/image/user.png') . '" alt="user">';
                     if ($row['file'] != 'user.png') {
-                        $img = '<a href="' . Helper::showImage($row['file']) . '" target="_blank"><img class="rounded" width="55" src="' .  Helper::showImage('thumb/'. $row['file']) . '" alt="user"></a>';
+                        $img = '<a href="' . Helper::showImage($row['file']) . '" target="_blank"><img class="rounded" width="55" src="' .  Helper::showImage('thumb/' . $row['file']) . '" alt="user"></a>';
                     }
                     return $img;
                 })
@@ -187,13 +195,11 @@ class RegistrationCotroller extends Controller
                 } else {
                     $form = $form_registration;
                 }
-
             } else {
                 $form = $form_registration;
             }
             // dd($form);
             return view('content.admin.registration.v_form_register', compact('form'));
-
         } else {
             return redirect()->back()->withErrors(['message' => 'Settingan PPDB untuk tahun ajaran belum di set!']);
         }
@@ -260,7 +266,6 @@ class RegistrationCotroller extends Controller
             'message' => 'Keputusan berhasil diperbarui',
             'status' => true,
         ], 200);
-
     }
 
     public function update_decision_at_time(Request $request)
@@ -274,7 +279,6 @@ class RegistrationCotroller extends Controller
             'message' => 'Keputusan berhasil diperbarui',
             'status' => true,
         ], 200);
-
     }
 
     public function print_preview()

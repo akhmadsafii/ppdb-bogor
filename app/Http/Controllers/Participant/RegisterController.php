@@ -14,6 +14,7 @@ use App\Models\SettingPayment;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
@@ -150,11 +151,11 @@ class RegisterController extends Controller
             Registration::updateOrCreate(
                 [
                     'id_participant' => Auth::guard('participant')->user()->id,
-                    'id_form' => $p['id_registration_'.$i],
+                    'id_form' => $p['id_registration_' . $i],
                     'school_year' => session('school_year'),
                 ],
                 [
-                    'value' => $p['val_registration_'.$i],
+                    'value' => $p['val_registration_' . $i],
                 ]
             );
         }
@@ -164,7 +165,6 @@ class RegisterController extends Controller
             'message' => 'Pendaftaran formulir berhasil',
             'status' => true,
         ], 200);
-
     }
 
     public function document(Request $request)
@@ -190,7 +190,7 @@ class RegisterController extends Controller
                 ->editColumn('image', function ($row) {
                     $img = '<img class="rounded" height="40" src="' . asset('asset/image/default.jpg') . '" alt="user">';
                     if ($row['file'] != null) {
-                        $img = '<a href="' . Helper::showImage($row->file) . '" target="_blank"><img class="rounded" width="55" src="' . Helper::showImage('thumb/'.$row->file) . '" alt="user"></a>';
+                        $img = '<a href="' . Helper::showImage($row->file) . '" target="_blank"><img class="rounded" width="55" src="' . Helper::showImage('thumb/' . $row->file) . '" alt="user"></a>';
                     }
                     return $img;
                 })
@@ -223,8 +223,10 @@ class RegisterController extends Controller
             'name' => 'Nama Document'
         ];
 
-        $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
-        $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_IMAGE'));
+        $setting = json_decode(Storage::get('settings.json'), true);
+        $max_size = 'max:' . $setting['max_upload'];
+        $mimes = 'mimes:' . $setting['format_image'];
+
         $rules = [
             'file' => ['file', $mimes, $max_size, 'required'],
             'name' => ['required', "regex:/^[a-zA-Z .,']+$/"],
@@ -233,7 +235,7 @@ class RegisterController extends Controller
         $messages = [
             'required' => ':attribute harus diisi.',
             'mimes' => 'Format tipe gambar :attribute yang diupload tidak diperbolehkan',
-            'max' => 'Ukuran maksimal file ' . env('SETTING_MAX_UPLOAD_IMAGE') / 1000 . ' MB',
+            'max' => 'Ukuran maksimal file ' . $setting['max_upload'] / 1000 . ' MB',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);
@@ -287,7 +289,7 @@ class RegisterController extends Controller
         $detail = Document::find($request->id);
         $file = null;
         if ($detail->file != null) {
-            $file = Helper::showImage('thumb/'.$detail->file);
+            $file = Helper::showImage('thumb/' . $detail->file);
         }
         $detail['file'] = $file;
         return response()->json($detail);

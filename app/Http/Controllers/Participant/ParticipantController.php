@@ -8,6 +8,7 @@ use App\Models\Participant;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ParticipantController extends Controller
@@ -26,8 +27,10 @@ class ParticipantController extends Controller
             'place_of_birth' => 'Tempat Lahir',
         ];
 
-        $max_size = 'max:' . env('SETTING_MAX_UPLOAD_IMAGE');
-        $mimes = 'mimes:' . str_replace('|', ',', env('SETTING_FORMAT_IMAGE'));
+        $setting = json_decode(Storage::get('settings.json'), true);
+        $max_size = 'max:' . $setting['max_upload'];
+        $mimes = 'mimes:' . $setting['format_image'];
+
         $rules = [
             'image' => ['file', 'image', $mimes, $max_size],
             'name' => ['required', "regex:/^[a-zA-Z .,']+$/"],
@@ -37,7 +40,7 @@ class ParticipantController extends Controller
             'email' => ':attribute tidak valid.',
             'required' => ':attribute harus diisi.',
             'mimes' => 'Format tipe gambar :attribute yang diupload tidak diperbolehkan',
-            'max' => 'Ukuran maksimal file ' . env('SETTING_MAX_UPLOAD_IMAGE') / 1000 . ' MB',
+            'max' => 'Ukuran maksimal file ' . $setting['max_upload'] / 1000 . ' MB',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $customAttributes);
