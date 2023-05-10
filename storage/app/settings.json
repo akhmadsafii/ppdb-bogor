@@ -1,0 +1,12 @@
+{
+    "background": "#007bc7",
+    "color": "#000000",
+    "background_active": "#007bc7",
+    "size_compress": "100",
+    "format_image": "jpeg,png,jpg,webp",
+    "format_file": "svg,pdf,doc,csv,xlsx,xls,docx,ppt,odt,ods,odp",
+    "max_upload": "3000",
+    "leaflet_premium": "0",
+    "leaflet_token": null,
+    "footer": "2017 \u00a9 Oscar Admin brought to you by UnifatoThemess"
+}
