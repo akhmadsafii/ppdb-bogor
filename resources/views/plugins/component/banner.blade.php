@@ -45,7 +45,7 @@
 @if ($banner && $banner['file'] != null)
     {{-- <section class="heading-page header-text"> --}}
     <section class="heading-page header-text" id="top"
-        style="background-image: url({{ Storage::disk('s3')->temporaryUrl('thumb/' . $banner['file'], '+2 minutes') }})">
+        style="background-image: url({{ asset('thumb/' . $banner['file']) }})">
         <div class='container'>
             <div class="content pt-5">
                 <div class="text pt-5 pb-0 text-white">Kategori</div>

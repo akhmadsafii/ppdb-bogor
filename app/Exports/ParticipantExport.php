@@ -29,50 +29,44 @@ class ParticipantExport extends DefaultValueBinder implements WithStyles, Should
             ->orderBy('order_form', 'ASC')
             ->get();
 
-        $reg_participant1 = DB::table('registrations as ppen')->join('participants as pp', 'pp.id', '=', 'ppen.id_participant')
+        DB::table('registrations as ppen')->join('participants as pp', 'pp.id', '=', 'ppen.id_participant')
             ->where('ppen.school_year', 'like', "$year%")
             ->select('pp.name', 'pp.nisn', 'pp.decision', 'ppen.id_participant')
-            ->groupBy('ppen.id_participant')
-            ->groupBy('pp.name')
-            ->groupBy('pp.nisn')
-            ->groupBy('pp.decision')
-            ->get();
+            ->groupBy('ppen.id_participant', 'pp.name', 'pp.nisn', 'pp.decision')
+            ->orderBy('ppen.id_participant')
+            ->chunk(200, function ($participants) use ($form, &$arr_data, $year) {
+                foreach ($participants as $prtcpn) {
+                    $model_item = [
+                        'id' => $prtcpn->id_participant,
+                        'name' => $prtcpn->name,
+                        'nisn' => $prtcpn->nisn,
+                        'decision' => $prtcpn->decision == 1 ? 'Diterima' : ($prtcpn->decision == 2 ? 'Tidak Diterima' : 'Belum Diputuskan'),
+                        'form' => $form,
+                    ];
 
-        $reg_participant2 = DB::table('registrations as ppen')
-            ->where('ppen.school_year', 'like', "$year%")
-            ->select('ppen.id_participant', 'ppen.id_form', 'ppen.value')
-            ->get();
+                    // Get the registration values for this participant
+                    $reg_participant2 = DB::table('registrations as ppen')
+                        ->where('ppen.school_year', 'like', "$year%")
+                        ->where('ppen.id_participant', $prtcpn->id_participant)
+                        ->select('ppen.id_participant', 'ppen.id_form', 'ppen.value')
+                        ->get();
 
-        foreach ($reg_participant1 as $prtcpn) {
-            $model[] = [
-                'id' => $prtcpn->id_participant,
-                'name' => $prtcpn->name,
-                'nisn' => $prtcpn->nisn,
-                'decision' => $prtcpn->decision == 1 ? 'Diterima' : ($prtcpn->decision == 2 ? 'Tidak Diterima' : 'Belum Diputuskan'),
-                'form' => $form,
-            ];
-        }
+                    $bt = [];
+                    foreach ($model_item['form'] as $frm) {
+                        $value = $reg_participant2->where('id_form', $frm->id)->first();
 
-        $arr_data = collect($model)->map(function ($a) {
-            return (array) $a;
-        })->toArray();
+                        $bt[] = [
+                            'id' => $frm->id,
+                            'initial' => $frm->initial,
+                            'name' => $frm->name,
+                            'value' => empty($value) ? null : $value->value
+                        ];
+                    }
+                    $model_item['form'] = $bt;
 
-        foreach ($arr_data as $key => $val) {
-            $bt = [];
-            foreach ($val['form'] as $frm) {
-                $value = collect($reg_participant2)->where('id_form', $frm->id)->where('id_participant', $val['id'])->first();
-
-                $bt[] = [
-                    'id' => $frm->id,
-                    'initial' => $frm->initial,
-                    'name' => $frm->name,
-                    'value' => empty($value) ? null : $value->value
-                ];
-            }
-            $arr_data[$key]['form'] = $bt;
-        }
-
-
+                    $arr_data[] = $model_item;
+                }
+            });
         $form_Column = [];
         foreach ($arr_data as $key => $val) {
             $form = array();
